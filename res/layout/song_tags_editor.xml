@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+		<LinearLayout 
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:paddingLeft="15dp"
+		    android:paddingRight="15dp"
+		    android:orientation="vertical" >
+		
+		    <TextView
+		        android:id="@+id/artistTextView"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/artist" />
+		
+		    <EditText
+		        android:id="@+id/tag_edit_dialog_artist_value"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:ems="10"
+		        android:inputType="text" >
+		
+		        <requestFocus />
+		    </EditText>
+		
+		    <TextView
+		        android:id="@+id/titleTextView"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/title" />
+		
+		    <EditText
+		        android:id="@+id/tag_edit_dialog_title_value"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:ems="10"
+		        android:inputType="text" />
+			
+		    <TextView
+		        android:id="@+id/albumTextView"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/album" />
+		
+		    <EditText
+		        android:id="@+id/tag_edit_dialog_album_value"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:ems="10"
+		        android:inputType="text" />
+		    
+		    <TextView
+		        android:id="@+id/yearTextView"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/year" />
+		
+		    <EditText
+		        android:id="@+id/tag_edit_dialog_year_value"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:ems="10"
+		        android:inputType="number" />
+		    
+		    <TextView
+		        android:id="@+id/cd_numberTextView"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/cd_number" />
+		
+		    <EditText
+		        android:id="@+id/tag_edit_dialog_cd_number_value"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:ems="10"
+		        android:inputType="number" />
+		    
+		    <TextView
+		        android:id="@+id/track_numberTextView"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="@string/track_number" />
+		
+		    <EditText
+		        android:id="@+id/tag_edit_dialog_track_number_value"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:ems="10"
+		        android:inputType="number" />
+		    
+		</LinearLayout>
+</ScrollView>
