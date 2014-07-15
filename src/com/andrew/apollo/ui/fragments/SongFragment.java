@@ -232,7 +232,6 @@ public class SongFragment extends Fragment implements LoaderCallbacks<List<Song>
                     });
                     return true;
                 case FragmentMenuItems.EDIT_TAGS:
-                	//NavUtils.openTagsEditor(getActivity());
                 	ApolloUtils.showTagsEditor(getActivity(), mSong);
                 	return true;
                 case FragmentMenuItems.ADD_TO_QUEUE:
