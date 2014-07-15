@@ -39,7 +39,7 @@ public abstract class ImageWorker {
     /**
      * Default transition drawable fade time
      */
-    private static final int FADE_IN_TIME = 200;
+    private static final int FADE_IN_TIME = 500;
 
     /**
      * Default artwork
