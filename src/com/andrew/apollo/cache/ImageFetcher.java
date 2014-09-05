@@ -40,11 +40,11 @@ import com.andrew.apollo.utils.PreferenceUtils;
  */
 public class ImageFetcher extends ImageWorker {
 
-    public static final int IO_BUFFER_SIZE_BYTES = 2048;
+    public static final int IO_BUFFER_SIZE_BYTES = 1024;
 
-    private static final int DEFAULT_MAX_IMAGE_HEIGHT = 1024;
+    private static final int DEFAULT_MAX_IMAGE_HEIGHT = 512;
 
-    private static final int DEFAULT_MAX_IMAGE_WIDTH = 1024;
+    private static final int DEFAULT_MAX_IMAGE_WIDTH = 512;
 
     private static final String DEFAULT_HTTP_CACHE_DIR = "http"; //$NON-NLS-1$
 

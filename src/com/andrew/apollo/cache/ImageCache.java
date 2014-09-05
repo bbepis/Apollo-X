@@ -61,9 +61,9 @@ public final class ImageCache {
     private static final float MEM_CACHE_DIVIDER = 0.25f;
 
     /**
-     * Default disk cache size 20MB
+     * Default disk cache size 512MB
      */
-    private static final int DISK_CACHE_SIZE = 1024 * 1024 * 20;
+    private static final int DISK_CACHE_SIZE = 1024 * 1024 * 512;
 
     /**
      * Compression settings when writing images to disk cache
@@ -78,7 +78,7 @@ public final class ImageCache {
     /**
      * Image compression quality
      */
-    private static final int COMPRESS_QUALITY = 100;
+    private static final int COMPRESS_QUALITY = 90;
 
     /**
      * LRU cache
