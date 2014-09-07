@@ -2557,7 +2557,7 @@ public class MusicPlaybackService extends Service {
          */
         public void setNextDataSource(final String path) {
             try {
-                mCurrentMediaPlayer.setNextMediaPlayer(null);
+                mCurrentMediaPlayer.setNextMediaPlayer(null); // TODO: Change/replace this method to make the Apollo work on 4.0.4
             } catch (IllegalArgumentException e) {
                 Log.i(TAG, "Next media player is current one, continuing");
             } catch (IllegalStateException e) {
