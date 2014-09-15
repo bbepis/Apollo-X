@@ -1097,7 +1097,7 @@ public class MusicPlaybackService extends Service {
 
             updateCursor(mPlayList[mPlayPos]);
             while (true) {
-                if (mCursor != null
+                if (mCursor != null && !mCursor.isClosed()
                         && openFile(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI + "/"
                                 + mCursor.getLong(IDCOLIDX))) {
                     break;
