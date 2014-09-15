@@ -471,10 +471,8 @@ public class ProfileActivity extends BaseActivity implements OnPageChangeListene
      */
     @Override
     public void onTouchDown() {
-        if (!mViewPager.isFakeDragging()) {
-            mViewPager.beginFakeDrag();
-        }
-    }
+    	mViewPager.beginFakeDrag();
+    	}
 
     /**
      * {@inheritDoc}
