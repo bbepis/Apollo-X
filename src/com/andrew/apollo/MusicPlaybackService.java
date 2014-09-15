@@ -2013,6 +2013,7 @@ public class MusicPlaybackService extends Service {
                 MediaButtonIntentReceiver.class.getName()));
 
         if (mPlayer.isInitialized()) {
+        	setNextTrack();
             final long duration = mPlayer.duration();
             if (mRepeatMode != REPEAT_CURRENT && duration > 2000
                     && mPlayer.position() >= duration - 2000) {
