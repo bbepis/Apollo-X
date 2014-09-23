@@ -1644,7 +1644,7 @@ public class MusicPlaybackService extends Service {
             	                    updateCursor(id);
             	
                 } else {
-                	                    String where = MediaStore.Audio.Media.DATA + "=?";
+                	                    String where = MediaColumns.DATA + "=?";
                 	                    String[] selectionArgs = new String[] {path};
                 	                    updateCursor(where, selectionArgs);
                 }

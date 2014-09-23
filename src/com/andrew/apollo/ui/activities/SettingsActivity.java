@@ -74,7 +74,7 @@ public class SettingsActivity extends PreferenceActivity {
         deleteCache();
         // About
         showOpenSourceLicenses();
-        // About
+        // Changelog
         showversion();
         // Update the version number
         try {

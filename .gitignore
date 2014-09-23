@@ -1,2 +1,14 @@
 git rm -r --cached bin
 git rm -r --cached gen
+/gen/
+/bin/
+/crashlytics.properties
+/.classpath
+/.gitignore
+/Android.mk
+/LICENSE
+/lint.xml
+/proguard.cfg
+/proguard.flags
+/project.properties
+/README.md

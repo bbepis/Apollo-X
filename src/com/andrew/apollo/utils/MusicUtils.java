@@ -1361,7 +1361,7 @@ public final class MusicUtils {
             int count = adapter.getCount() - (adapter.getViewTypeCount() > 1 ? 1 : 0);
             list = new long[count];
             for (int i = 0; i < count; i++) {
-                list[i] = ((Song) adapter.getItem(i)).mSongId;
+                list[i] = adapter.getItem(i).mSongId;
             }
         }
         return list;

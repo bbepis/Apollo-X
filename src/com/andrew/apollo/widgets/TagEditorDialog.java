@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AudioColumns;
+import android.provider.MediaStore.MediaColumns;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -118,7 +119,7 @@ public class TagEditorDialog extends AlertDialog implements TextWatcher {
         values.put(AudioColumns.ARTIST, mArtistValue.getText().toString());
         mDialogSong.mArtistName = mArtistValue.getText().toString();
         
-        values.put(AudioColumns.TITLE, mTrackTitleValue.getText().toString());
+        values.put(MediaColumns.TITLE, mTrackTitleValue.getText().toString());
         mDialogSong.mSongName = mTrackTitleValue.getText().toString();
         
         if(!mDialogSong.mAlbumName.equals(mAlbumValue.getText().toString())) {
