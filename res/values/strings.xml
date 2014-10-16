@@ -185,4 +185,6 @@
 	<string name="cd_number">CD Number</string>
 	<string name="track_number">Track Number</string>
 	<string name="year">Year</string>
+	<string name="action_settings">action_settings</string>
+	<string name="title_activity_tags">title_activity_tags</string>
 </resources>
