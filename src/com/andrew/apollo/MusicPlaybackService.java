@@ -11,14 +11,9 @@
 
 package com.andrew.apollo;
 
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-import java.util.LinkedList;
-import java.util.Random;
-import java.util.TreeSet;
-
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
@@ -35,8 +30,11 @@ import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
-import android.media.RemoteControlClient;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.media.MediaMetadata;
 import android.media.audiofx.AudioEffect;
+import android.media.session.MediaSession;
+import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -47,20 +45,17 @@ import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.os.RemoteException;
 import android.os.SystemClock;
-import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AlbumColumns;
 import android.provider.MediaStore.Audio.AudioColumns;
-import android.provider.MediaStore.MediaColumns;
-import android.support.v4.content.WakefulBroadcastReceiver;
+import android.support.v7.graphics.Palette;
+import android.text.TextUtils;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import com.andrew.apollo.appwidgets.AppWidgetLarge;
 import com.andrew.apollo.appwidgets.AppWidgetLargeAlternate;
-import com.andrew.apollo.appwidgets.AppWidgetLargeAlternateTransparent;
-import com.andrew.apollo.appwidgets.AppWidgetLargeTransparent;
 import com.andrew.apollo.appwidgets.AppWidgetSmall;
-import com.andrew.apollo.appwidgets.AppWidgetSmallTransparent;
 import com.andrew.apollo.appwidgets.RecentWidgetProvider;
 import com.andrew.apollo.cache.ImageCache;
 import com.andrew.apollo.cache.ImageFetcher;
@@ -69,6 +64,13 @@ import com.andrew.apollo.provider.RecentStore;
 import com.andrew.apollo.utils.ApolloUtils;
 import com.andrew.apollo.utils.Lists;
 import com.andrew.apollo.utils.MusicUtils;
+import com.andrew.apollo.utils.PreferenceUtils;
+
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+import java.util.LinkedList;
+import java.util.Random;
+import java.util.TreeSet;
 
 /**
  * A backbround {@link Service} used to keep music playing between activities
@@ -106,7 +108,7 @@ public class MusicPlaybackService extends Service {
     public static final String REPEATMODE_CHANGED = "com.andrew.apollo.repeatmodechanged";
 
     /**
-     * Indicates the shuffle mode changed
+     * Indicates the shuffle mode chaned
      */
     public static final String SHUFFLEMODE_CHANGED = "com.andrew.apollo.shufflemodechanged";
 
@@ -164,7 +166,7 @@ public class MusicPlaybackService extends Service {
     public static final String FOREGROUND_STATE_CHANGED = "com.andrew.apollo.fgstatechanged";
 
     public static final String NOW_IN_FOREGROUND = "nowinforeground";
-    
+
     public static final String FROM_MEDIA_BUTTON = "frommediabutton";
 
     /**
@@ -292,7 +294,7 @@ public class MusicPlaybackService extends Service {
      * command
      */
     private static final long REWIND_INSTEAD_PREVIOUS_THRESHOLD = 3000;
-   
+
     /**
      * The max size allowed for the track history
      */
@@ -356,23 +358,7 @@ public class MusicPlaybackService extends Service {
      */
     private final AppWidgetLargeAlternate mAppWidgetLargeAlternate = AppWidgetLargeAlternate
             .getInstance();
-    
-    /**
-     * 4x1 widget transparent
-     */
-    private final AppWidgetSmallTransparent mAppWidgetSmallTransparent = AppWidgetSmallTransparent.getInstance();
 
-    /**
-     * 4x2 widget transparent
-     */
-    private final AppWidgetLargeTransparent mAppWidgetLargeTransparent = AppWidgetLargeTransparent.getInstance();
-
-    /**
-     * 4x2 alternate widget transparent
-     */
-    private final AppWidgetLargeAlternateTransparent mAppWidgetLargeAlternateTransparent = AppWidgetLargeAlternateTransparent
-            .getInstance();
-    
     /**
      * Recently listened widget
      */
@@ -451,7 +437,7 @@ public class MusicPlaybackService extends Service {
     /**
      * Lock screen controls
      */
-    private RemoteControlClient mRemoteControlClient;
+    private MediaSession mSession;
 
     private ComponentName mMediaButtonReceiverComponent;
 
@@ -487,11 +473,6 @@ public class MusicPlaybackService extends Service {
      * Image cache
      */
     private ImageFetcher mImageFetcher;
-
-    /**
-     * Used to build the notification
-     */
-    private NotificationHelper mNotificationHelper;
 
     /**
      * Recently listened database
@@ -562,9 +543,6 @@ public class MusicPlaybackService extends Service {
         mRecentsCache = RecentStore.getInstance(this);
         mFavoritesCache = FavoritesStore.getInstance(this);
 
-        // Initialize the notification helper
-        mNotificationHelper = new NotificationHelper(this);
-
         // Initialize the image fetcher
         mImageFetcher = ImageFetcher.getInstance(this);
         // Initialize the image cache
@@ -589,7 +567,7 @@ public class MusicPlaybackService extends Service {
         mAudioManager.registerMediaButtonEventReceiver(mMediaButtonReceiverComponent);
 
         // Use the remote control APIs to set the playback state
-        setUpRemoteControlClient();
+        setUpMediaSession();
 
         // Initialize the preferences
         mPreferences = getSharedPreferences("Service", 0);
@@ -635,45 +613,45 @@ public class MusicPlaybackService extends Service {
         notifyChange(META_CHANGED);
     }
 
-    /**
-     * Initializes the remote control client
-     */
-    private void setUpRemoteControlClient() {
-        final Intent mediaButtonIntent = new Intent(Intent.ACTION_MEDIA_BUTTON);
-        mediaButtonIntent.setComponent(mMediaButtonReceiverComponent);
-        mRemoteControlClient = new RemoteControlClient(
-                PendingIntent.getBroadcast(getApplicationContext(), 0, mediaButtonIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT));
-        mAudioManager.registerRemoteControlClient(mRemoteControlClient);
-
-        // Flags for the media transport control that this client supports.
-        int flags = RemoteControlClient.FLAG_KEY_MEDIA_PREVIOUS
-                | RemoteControlClient.FLAG_KEY_MEDIA_NEXT
-                | RemoteControlClient.FLAG_KEY_MEDIA_PLAY
-                | RemoteControlClient.FLAG_KEY_MEDIA_PAUSE
-                | RemoteControlClient.FLAG_KEY_MEDIA_PLAY_PAUSE
-                | RemoteControlClient.FLAG_KEY_MEDIA_STOP;
-
-        if (ApolloUtils.hasJellyBeanMR2()) {
-            flags |= RemoteControlClient.FLAG_KEY_MEDIA_POSITION_UPDATE;
-
-            mRemoteControlClient.setOnGetPlaybackPositionListener(
-                    new RemoteControlClient.OnGetPlaybackPositionListener() {
-                @Override
-                public long onGetPlaybackPosition() {
-                    return position();
+    private void setUpMediaSession() {
+        mSession = new MediaSession(this, "Apollo");
+        mSession.setCallback(new MediaSession.Callback() {
+            @Override
+            public void onPause() {
+                pause();
+                mPausedByTransientLossOfFocus = false;
+            }
+            @Override
+            public void onPlay() {
+                play();
+            }
+            @Override
+            public void onSeekTo(long pos) {
+                seek(pos);
+            }
+            @Override
+            public void onSkipToNext() {
+                gotoNext(true);
+            }
+            @Override
+            public void onSkipToPrevious() {
+                if (position() < REWIND_INSTEAD_PREVIOUS_THRESHOLD) {
+                    prev();
+                } else {
+                    seek(0);
+                    play();
                 }
-            });
-            mRemoteControlClient.setPlaybackPositionUpdateListener(
-                    new RemoteControlClient.OnPlaybackPositionUpdateListener() {
-                @Override
-                public void onPlaybackPositionUpdate(long newPositionMs) {
-                    seek(newPositionMs);
-                }
-            });
-        }
-
-        mRemoteControlClient.setTransportControlFlags(flags);
+            }
+            @Override
+            public void onStop() {
+                pause();
+                mPausedByTransientLossOfFocus = false;
+                seek(0);
+                releaseServiceUiAndStop();
+            }
+        });
+        mSession.setFlags(MediaSession.FLAG_HANDLES_TRANSPORT_CONTROLS);
+        mSession.setActive(true);
     }
 
     /**
@@ -692,6 +670,7 @@ public class MusicPlaybackService extends Service {
 
         // remove any pending alarms
         mAlarmManager.cancel(mShutdownIntent);
+
         // Remove all pending messages before kill the player
         mPlayerHandler.removeCallbacksAndMessages(null);
 
@@ -701,7 +680,9 @@ public class MusicPlaybackService extends Service {
 
         // Remove the audio focus listener and lock screen controls
         mAudioManager.abandonAudioFocus(mAudioFocusListener);
-        mAudioManager.unregisterRemoteControlClient(mRemoteControlClient);
+        if (mSession != null) {
+            mSession.release();
+        }
 
         // Remove any callbacks from the handler
         mPlayerHandler.removeCallbacksAndMessages(null);
@@ -749,10 +730,9 @@ public class MusicPlaybackService extends Service {
         // just started but not bound to and nothing is playing
         scheduleDelayedShutdown();
 
-       if (intent != null && intent.getBooleanExtra(FROM_MEDIA_BUTTON, false)) {
-            WakefulBroadcastReceiver.completeWakefulIntent(intent);
+        if (intent != null && intent.getBooleanExtra(FROM_MEDIA_BUTTON, false)) {
+            MediaButtonIntentReceiver.completeWakefulIntent(intent);
         }
-
 
         return START_STICKY;
     }
@@ -765,7 +745,7 @@ public class MusicPlaybackService extends Service {
         }
 
         if (D) Log.d(TAG, "Nothing is playing anymore, releasing notification");
-        mNotificationHelper.killNotification();
+        stopForeground(true);
         mAudioManager.abandonAudioFocus(mAudioFocusListener);
 
         if (!mServiceInUse) {
@@ -818,10 +798,9 @@ public class MusicPlaybackService extends Service {
      */
     private void updateNotification() {
         if (!mAnyActivityInForeground && isPlaying()) {
-            mNotificationHelper.buildNotification(getAlbumName(), getArtistName(),
-                    getTrackName(), getAlbumId(), getAlbumArt(), isPlaying());
+            buildNotification();
         } else if (mAnyActivityInForeground) {
-            mNotificationHelper.killNotification();
+            stopForeground(true);
         }
     }
 
@@ -1026,19 +1005,18 @@ public class MusicPlaybackService extends Service {
             mCursor = openCursorAndGoToFirst(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                     PROJECTION, selection, selectionArgs);
         }
-                updateAlbumCursor();
-            }
-        
-            private void updateCursor(final Uri uri) {
-                synchronized (this) {
-                    closeCursor();
-                    mCursor = openCursorAndGoToFirst(uri, PROJECTION, null, null);
-                }
-                updateAlbumCursor();
-            }
-         
-            private void updateAlbumCursor() {
+        updateAlbumCursor();
+    }
 
+    private void updateCursor(final Uri uri) {
+        synchronized (this) {
+            closeCursor();
+            mCursor = openCursorAndGoToFirst(uri, PROJECTION, null, null);
+        }
+        updateAlbumCursor();
+    }
+
+    private void updateAlbumCursor() {
         long albumId = getAlbumId();
         if (albumId >= 0) {
             mAlbumCursor = openCursorAndGoToFirst(MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
@@ -1051,7 +1029,7 @@ public class MusicPlaybackService extends Service {
     private Cursor openCursorAndGoToFirst(Uri uri, String[] projection,
             String selection, String[] selectionArgs) {
         Cursor c = getContentResolver().query(uri, projection,
-                selection, selectionArgs, null);
+                selection, selectionArgs, null, null);
         if (c == null) {
             return null;
         }
@@ -1236,8 +1214,8 @@ public class MusicPlaybackService extends Service {
         try {
             cursor = getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                     new String[] {
-                        BaseColumns._ID
-                    }, AudioColumns.IS_MUSIC + "=1", null, null);
+                        MediaStore.Audio.Media._ID
+                    }, MediaStore.Audio.Media.IS_MUSIC + "=1", null, null);
             if (cursor == null || cursor.getCount() == 0) {
                 return false;
             }
@@ -1339,7 +1317,9 @@ public class MusicPlaybackService extends Service {
         if (D) Log.d(TAG, "notifyChange: what = " + what);
 
         // Update the lockscreen controls
-        updateRemoteControlClient(what);
+        if (mSession != null) {
+            updateMediaSession(what);
+        }
 
         if (what.equals(POSITION_CHANGED)) {
             return;
@@ -1378,34 +1358,24 @@ public class MusicPlaybackService extends Service {
         }
 
         if (what.equals(PLAYSTATE_CHANGED)) {
-            mNotificationHelper.updatePlayState(isPlaying());
+            buildNotification();
         }
 
         // Update the app-widgets
         mAppWidgetSmall.notifyChange(this, what);
         mAppWidgetLarge.notifyChange(this, what);
         mAppWidgetLargeAlternate.notifyChange(this, what);
-        mAppWidgetLargeAlternateTransparent.notifyChange(this, what);
-        mAppWidgetLargeTransparent.notifyChange(this, what);
-        mAppWidgetSmallTransparent.notifyChange(this, what);
         mRecentWidgetProvider.notifyChange(this, what);
     }
 
-    /**
-     * Updates the lockscreen controls.
-     *
-     * @param what The broadcast
-     */
-    private void updateRemoteControlClient(final String what) {
+    private void updateMediaSession(final String what) {
         int playState = mIsSupposedToBePlaying
-                ? RemoteControlClient.PLAYSTATE_PLAYING
-                : RemoteControlClient.PLAYSTATE_PAUSED;
+                ? PlaybackState.STATE_PLAYING
+                : PlaybackState.STATE_PAUSED;
 
-        if (ApolloUtils.hasJellyBeanMR2()
-                && (what.equals(PLAYSTATE_CHANGED) || what.equals(POSITION_CHANGED))) {
-            mRemoteControlClient.setPlaybackState(playState, position(), 1.0f);
-        } else if (what.equals(PLAYSTATE_CHANGED)) {
-            mRemoteControlClient.setPlaybackState(playState);
+        if (what.equals(PLAYSTATE_CHANGED) || what.equals(POSITION_CHANGED)) {
+            mSession.setPlaybackState(new PlaybackState.Builder()
+                    .setState(playState, position(), 1.0f).build());
         } else if (what.equals(META_CHANGED) || what.equals(QUEUE_CHANGED)) {
             Bitmap albumArt = getAlbumArt();
             if (albumArt != null) {
@@ -1417,21 +1387,85 @@ public class MusicPlaybackService extends Service {
                 }
                 albumArt = albumArt.copy(config, false);
             }
-            mRemoteControlClient
-                    .editMetadata(true)
-                    .putString(MediaMetadataRetriever.METADATA_KEY_ARTIST, getArtistName())
-                    .putString(MediaMetadataRetriever.METADATA_KEY_ALBUMARTIST,
-                            getAlbumArtistName())
-                    .putString(MediaMetadataRetriever.METADATA_KEY_ALBUM, getAlbumName())
-                    .putString(MediaMetadataRetriever.METADATA_KEY_TITLE, getTrackName())
-                    .putLong(MediaMetadataRetriever.METADATA_KEY_DURATION, duration())
-                    .putBitmap(RemoteControlClient.MetadataEditor.BITMAP_KEY_ARTWORK, albumArt)
-                    .apply();
 
-            if (ApolloUtils.hasJellyBeanMR2()) {
-                mRemoteControlClient.setPlaybackState(playState, position(), 1.0f);
-            }
+            mSession.setMetadata(new MediaMetadata.Builder()
+                    .putString(MediaMetadata.METADATA_KEY_ARTIST, getArtistName())
+                    .putString(MediaMetadata.METADATA_KEY_ALBUM_ARTIST, getAlbumArtistName())
+                    .putString(MediaMetadata.METADATA_KEY_ALBUM, getAlbumName())
+                    .putString(MediaMetadata.METADATA_KEY_TITLE, getTrackName())
+                    .putLong(MediaMetadata.METADATA_KEY_DURATION, duration())
+                    .putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, albumArt)
+                    .build());
+
+            mSession.setPlaybackState(new PlaybackState.Builder()
+                    .setState(playState, position(), 1.0f).build());
         }
+    }
+
+    private void buildNotification() {
+        final String albumName = getAlbumName();
+        final String artistName = getArtistName();
+        final boolean isPlaying = isPlaying();
+        String text = TextUtils.isEmpty(albumName)
+                ? artistName : artistName + " - " + albumName;
+
+        int playButtonResId = isPlaying
+                ? R.drawable.btn_playback_pause : R.drawable.btn_playback_play;
+        int playButtonTitleResId = isPlaying
+                ? R.string.accessibility_pause : R.string.accessibility_play;
+
+        Notification.MediaStyle style = new Notification.MediaStyle()
+                .setMediaSession(mSession.getSessionToken())
+                .setShowActionsInCompactView(0, 1, 2);
+
+        Intent nowPlayingIntent = new Intent("com.andrew.apollo.AUDIO_PLAYER")
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent clickIntent = PendingIntent.getActivity(this, 0, nowPlayingIntent, 0);
+
+        Notification notification = new Notification.Builder(this)
+                .setSmallIcon(R.drawable.stat_notify_music)
+                .setLargeIcon(getAlbumArt())
+                .setContentIntent(clickIntent)
+                .setContentTitle(getTrackName())
+                .setContentText(text)
+                .setStyle(style)
+                .setShowWhen(false)
+                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                .addAction(R.drawable.btn_playback_previous,
+                        getString(R.string.accessibility_prev),
+                        retrievePlaybackAction(PREVIOUS_ACTION))
+                .addAction(playButtonResId, getString(playButtonTitleResId),
+                        retrievePlaybackAction(TOGGLEPAUSE_ACTION))
+                .addAction(R.drawable.btn_playback_next,
+                        getString(R.string.accessibility_next),
+                        retrievePlaybackAction(NEXT_ACTION))
+                .build();
+
+        // Generate a new Palette from the current artwork
+        final Palette p = Palette.generate(getAlbumArt());
+        // Check for dark vibrant colors, then vibrant, then default
+        final int notiColor = p != null ? p.getDarkVibrantColor(p.getVibrantColor(0)) : 0;
+        // Notificatin.color will only be applied when the
+        // Notification is recreated by the system, but we don't
+        // want to call stopForeground(true) because this will
+        // remove the Notification entirely for a moment. We only
+        // want to apply the new color.
+        final RemoteViews bigContentViews = notification.bigContentView;
+        final RemoteViews contentViews = notification.contentView;
+        final int content = getResources()
+                .getIdentifier("status_bar_latest_event_content", "id", "android");
+        bigContentViews.setInt(content, "setBackgroundColor", notiColor);
+        contentViews.setInt(content, "setBackgroundColor", notiColor);
+
+        startForeground(hashCode(), notification);
+    }
+
+    private final PendingIntent retrievePlaybackAction(final String action) {
+        final ComponentName serviceName = new ComponentName(this, MusicPlaybackService.class);
+        Intent intent = new Intent(action);
+        intent.setComponent(serviceName);
+
+        return PendingIntent.getService(this, 0, intent, 0);
     }
 
     /**
@@ -1627,26 +1661,26 @@ public class MusicPlaybackService extends Service {
 
             // If mCursor is null, try to associate path with a database cursor
             if (mCursor == null) {
-            	                Uri uri = Uri.parse(path);
-            	                long id = -1;
-            	                try  {
-            	                    id = Long.valueOf(uri.getLastPathSegment());
-            	                } catch (NumberFormatException ex) {
-            	                    // Ignore
-            	                }
-            	
-            	                if (id != -1 && path.startsWith(MediaStore.Audio.Media.
-            	                        EXTERNAL_CONTENT_URI.toString())) {
-            	                    updateCursor(uri);
-            	
-            	                } else if (id != -1 && path.startsWith(MediaStore.Files.getContentUri(
-            	                        "external").toString())) {
-            	                    updateCursor(id);
-            	
+                Uri uri = Uri.parse(path);
+                long id = -1;
+                try  {
+                    id = Long.valueOf(uri.getLastPathSegment());
+                } catch (NumberFormatException ex) {
+                    // Ignore
+                }
+
+                if (id != -1 && path.startsWith(MediaStore.Audio.Media.
+                        EXTERNAL_CONTENT_URI.toString())) {
+                    updateCursor(uri);
+
+                } else if (id != -1 && path.startsWith(MediaStore.Files.getContentUri(
+                        "external").toString())) {
+                    updateCursor(id);
+
                 } else {
-                	                    String where = MediaColumns.DATA + "=?";
-                	                    String[] selectionArgs = new String[] {path};
-                	                    updateCursor(where, selectionArgs);
+                    String where = MediaStore.Audio.Media.DATA + "=?";
+                    String[] selectionArgs = new String[] {path};
+                    updateCursor(where, selectionArgs);
                 }
                 try {
                     if (mCursor != null) {
@@ -1767,7 +1801,7 @@ public class MusicPlaybackService extends Service {
             if (mCursor == null) {
                 return null;
             }
-            return mCursor.getString(mCursor.getColumnIndexOrThrow(MediaColumns.DATA));
+            return mCursor.getString(mCursor.getColumnIndexOrThrow(AudioColumns.DATA));
         }
     }
 
@@ -1795,7 +1829,7 @@ public class MusicPlaybackService extends Service {
             if (mCursor == null) {
                 return null;
             }
-            return mCursor.getString(mCursor.getColumnIndexOrThrow(MediaColumns.TITLE));
+            return mCursor.getString(mCursor.getColumnIndexOrThrow(AudioColumns.TITLE));
         }
     }
 
@@ -2013,7 +2047,8 @@ public class MusicPlaybackService extends Service {
                 MediaButtonIntentReceiver.class.getName()));
 
         if (mPlayer.isInitialized()) {
-        	setNextTrack();
+            setNextTrack();
+
             final long duration = mPlayer.duration();
             if (mRepeatMode != REPEAT_CURRENT && duration > 2000
                     && mPlayer.position() >= duration - 2000) {
@@ -2576,7 +2611,7 @@ public class MusicPlaybackService extends Service {
          */
         public void setNextDataSource(final String path) {
             try {
-                mCurrentMediaPlayer.setNextMediaPlayer(null); // TODO: Change/replace this method to make the Apollo work on 4.0.4
+                mCurrentMediaPlayer.setNextMediaPlayer(null);
             } catch (IllegalArgumentException e) {
                 Log.i(TAG, "Next media player is current one, continuing");
             } catch (IllegalStateException e) {

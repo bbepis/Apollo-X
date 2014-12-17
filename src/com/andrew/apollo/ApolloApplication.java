@@ -36,10 +36,7 @@ public class ApolloApplication extends Application {
     @Override
     public void onCreate() {
     	super.onCreate();
-    	
-    	// Start Crashlytics
-    	Crashlytics.start(this);
-        
+  
     	// Enable strict mode logging
         enableStrictMode();
         
