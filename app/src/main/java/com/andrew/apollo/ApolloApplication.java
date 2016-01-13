@@ -18,7 +18,6 @@ import android.app.Application;
 import android.os.StrictMode;
 
 import com.andrew.apollo.cache.ImageCache;
-import com.crashlytics.android.Crashlytics;
 
 /**
  * Used to turn off logging for jaudiotagger and free up memory when
@@ -36,9 +35,7 @@ public class ApolloApplication extends Application {
     @Override
     public void onCreate() {
     	super.onCreate();
-    	
-    	// Start Crashlytics
-    	Crashlytics.start(this);
+
         
     	// Enable strict mode logging
         enableStrictMode();
