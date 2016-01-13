@@ -21,15 +21,18 @@
 
 package com.andrew.apollo.lastfm;
 
-import static com.andrew.apollo.lastfm.StringUtilities.encode;
-import static com.andrew.apollo.lastfm.StringUtilities.map;
+import android.content.Context;
+import android.util.Log;
+import com.andrew.apollo.lastfm.Result.Status;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
@@ -38,20 +41,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.WeakHashMap;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.apache.http.HttpStatus;
-
-import android.content.Context;
-import android.util.Log;
-
-import com.andrew.apollo.lastfm.Result.Status;
+import static com.andrew.apollo.lastfm.StringUtilities.encode;
+import static com.andrew.apollo.lastfm.StringUtilities.map;
 
 /**
  * The <code>Caller</code> class handles the low-level communication between the
@@ -142,7 +133,7 @@ public class Caller {
                 } catch (final IOException ioEx) {
                 // We will assume that the server is not ready
                       Log.e(TAG, "Failed to download data", ioEx);
-                      lastResult = Result.createHttpErrorResult(HttpStatus.SC_SERVICE_UNAVAILABLE,
+                      lastResult = Result.createHttpErrorResult(HttpURLConnection.HTTP_UNAVAILABLE,
                             ioEx.getLocalizedMessage());
                       return lastResult;
             }

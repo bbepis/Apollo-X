@@ -12,7 +12,13 @@
      distributed under the License is distributed on an "AS IS" BASIS,
      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
      See the License for the specific language governing permissions and
-     limitations under the License.
+     limitations under the License.
+
+
+
+
+
+
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.andrew.apollo"
@@ -22,7 +28,7 @@
     <!-- ICS to KitKat -->
     <uses-sdk
         android:minSdkVersion="14"
-        android:targetSdkVersion="19" />
+        android:targetSdkVersion="22" />
 
     <!-- Used for caching and creating new playlists -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -284,9 +290,6 @@
             android:label="@string/app_name"
             android:process=":main" />
 
-        <meta-data
-            android:name="com.crashlytics.ApiKey"
-            android:value="a2d12cc1f65ada6f2bde49b6ce74ac63fd56857e" />
 
         <activity
             android:name="com.andrew.apollo.ui.activities.TagsActivity"
