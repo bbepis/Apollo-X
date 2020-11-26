@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.2.3'
+        classpath 'com.android.tools.build:gradle:1.5.0'
     }
 }
 apply plugin: 'com.android.application'
@@ -14,13 +14,13 @@ repositories {
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.2"
+    compileSdkVersion 28
+    buildToolsVersion '30.0.2'
 
     defaultConfig {
         applicationId "com.andrew.apollo"
-        minSdkVersion 14
-        targetSdkVersion 22
+        minSdkVersion 28
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
     }
@@ -30,9 +30,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    lintOptions{
+        disable 'MissingTranslation'
+    }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:support-v4:23.1.1'
+    compile 'com.android.support:support-v4:28.0.0'
 }
