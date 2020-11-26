@@ -23,7 +23,7 @@
     android:paddingLeft="@dimen/list_preferred_item_padding"
     android:paddingRight="@dimen/list_preferred_item_padding" >
 
-    <com.andrew.apollo.widgets.theme.ThemeableTextView
+    <io.bepis.apollox.widgets.theme.ThemeableTextView
         android:id="@+id/line_one"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
         android:textStyle="bold"
         app:themeResource="line_one" />
 
-    <com.andrew.apollo.widgets.theme.ThemeableTextView
+    <io.bepis.apollox.widgets.theme.ThemeableTextView
         android:id="@+id/line_two"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
         android:textSize="@dimen/text_size_small"
         app:themeResource="line_two" />
 
-    <com.andrew.apollo.widgets.theme.ThemeableTextView
+    <io.bepis.apollox.widgets.theme.ThemeableTextView
         android:id="@+id/line_three"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

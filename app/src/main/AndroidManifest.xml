@@ -21,7 +21,7 @@
 
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.andrew.apollo"
+    package="io.bepis.apollox"
     android:versionCode="3"
     android:versionName="1.3.4" >
 
@@ -43,17 +43,17 @@
     <!-- Lower or raise the music based on the phone state -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <!-- Used to set the devices's ringtone -->
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+<!--    <uses-permission android:name="android.permission.WRITE_SETTINGS" />-->
     <!-- Used to create launcher shortcuts -->
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
     <!-- Used to check if the app is in the background -->
     <uses-permission android:name="android.permission.GET_TASKS" />
     <!-- Those might fix stuff- blind try -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
+<!--    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />-->
 
     <application
-        android:name="com.andrew.apollo.ApolloApplication"
+        android:name="io.bepis.apollox.ApolloApplication"
         android:allowBackup="true"
         android:allowTaskReparenting="true"
         android:hardwareAccelerated="true"
@@ -68,7 +68,7 @@
             android:value=".ui.activities.SearchActivity" />
         <!-- Main activity -->
         <activity
-            android:name="com.andrew.apollo.ui.activities.HomeActivity"
+            android:name="io.bepis.apollox.ui.activities.HomeActivity"
             android:windowSoftInputMode="adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -81,7 +81,7 @@
         </activity>
         <!-- Now playing -->
         <activity
-            android:name="com.andrew.apollo.ui.activities.AudioPlayerActivity"
+            android:name="io.bepis.apollox.ui.activities.AudioPlayerActivity"
             android:clearTaskOnLaunch="true"
             android:exported="true"
             android:launchMode="singleTask"
@@ -144,11 +144,11 @@
 
         <!-- Profile phone Activity -->
         <activity
-            android:name="com.andrew.apollo.ui.activities.ProfileActivity"
+            android:name="io.bepis.apollox.ui.activities.ProfileActivity"
             android:excludeFromRecents="true" />
         <!-- Shortcut launcher Activity -->
         <activity
-            android:name="com.andrew.apollo.ui.activities.ShortcutActivity"
+            android:name="io.bepis.apollox.ui.activities.ShortcutActivity"
             android:excludeFromRecents="true"
             android:exported="true"
             android:theme="@style/Theme.Transparent" >
@@ -160,7 +160,7 @@
         </activity>
         <!-- Search interface -->
         <activity
-            android:name="com.andrew.apollo.ui.activities.SearchActivity"
+            android:name="io.bepis.apollox.ui.activities.SearchActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -175,16 +175,16 @@
         </activity>
         <!-- Used to set options -->
         <activity
-            android:name="com.andrew.apollo.ui.activities.SettingsActivity"
+            android:name="io.bepis.apollox.ui.activities.SettingsActivity"
             android:label="@string/menu_settings"
             android:theme="@style/Apollo.Theme.Dark" />
         <!-- Themes Activity -->
         <activity
-            android:name="com.andrew.apollo.ui.activities.ThemesActivity"
+            android:name="io.bepis.apollox.ui.activities.ThemesActivity"
             android:excludeFromRecents="true" />
         <!-- 4x1 App Widget -->
         <receiver
-            android:name="com.andrew.apollo.appwidgets.AppWidgetSmall"
+            android:name="io.bepis.apollox.appwidgets.AppWidgetSmall"
             android:exported="true"
             android:label="@string/app_widget_small" >
             <intent-filter>
@@ -197,7 +197,7 @@
         </receiver>
         <!-- 4x1 App Widget Transparent -->
         <receiver
-            android:name="com.andrew.apollo.appwidgets.AppWidgetSmallTransparent"
+            android:name="io.bepis.apollox.appwidgets.AppWidgetSmallTransparent"
             android:exported="true"
             android:label="@string/app_widget_small_transparent" >
             <intent-filter>
@@ -210,7 +210,7 @@
         </receiver>
         <!-- 4x2  App Widget -->
         <receiver
-            android:name="com.andrew.apollo.appwidgets.AppWidgetLarge"
+            android:name="io.bepis.apollox.appwidgets.AppWidgetLarge"
             android:exported="true"
             android:label="@string/app_widget_large" >
             <intent-filter>
@@ -223,7 +223,7 @@
         </receiver>
         <!-- 4x2  App Widget Transparent -->
         <receiver
-            android:name="com.andrew.apollo.appwidgets.AppWidgetLargeTransparent"
+            android:name="io.bepis.apollox.appwidgets.AppWidgetLargeTransparent"
             android:exported="true"
             android:label="@string/app_widget_large_transparent" >
             <intent-filter>
@@ -236,7 +236,7 @@
         </receiver>
         <!-- 4x2 alternate App Widget -->
         <receiver
-            android:name="com.andrew.apollo.appwidgets.AppWidgetLargeAlternate"
+            android:name="io.bepis.apollox.appwidgets.AppWidgetLargeAlternate"
             android:exported="true"
             android:label="@string/app_widget_large_alt" >
             <intent-filter>
@@ -249,7 +249,7 @@
         </receiver>
         <!-- 4x2 alternate App Widget Transparent -->
         <receiver
-            android:name="com.andrew.apollo.appwidgets.AppWidgetLargeAlternateTransparent"
+            android:name="io.bepis.apollox.appwidgets.AppWidgetLargeAlternateTransparent"
             android:exported="true"
             android:label="@string/app_widget_large_alt_transparent" >
             <intent-filter>
@@ -262,7 +262,7 @@
         </receiver>
         <!-- Resizable recently listened App Widget -->
         <receiver
-            android:name="com.andrew.apollo.appwidgets.RecentWidgetProvider"
+            android:name="io.bepis.apollox.appwidgets.RecentWidgetProvider"
             android:exported="true"
             android:label="@string/app_widget_recent" >
             <intent-filter>
@@ -275,10 +275,10 @@
         </receiver>
         <!-- The service serving the RemoteViews to the recently listened App Widget -->
         <service
-            android:name="com.andrew.apollo.appwidgets.RecentWidgetService"
+            android:name="io.bepis.apollox.appwidgets.RecentWidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
         <!-- Media button receiver -->
-        <receiver android:name="com.andrew.apollo.MediaButtonIntentReceiver" >
+        <receiver android:name="io.bepis.apollox.MediaButtonIntentReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_BUTTON" />
                 <action android:name="android.media.AUDIO_BECOMING_NOISY" />
@@ -286,13 +286,13 @@
         </receiver>
         <!-- Music service -->
         <service
-            android:name="com.andrew.apollo.MusicPlaybackService"
+            android:name="io.bepis.apollox.MusicPlaybackService"
             android:label="@string/app_name"
             android:process=":main" />
 
 
         <activity
-            android:name="com.andrew.apollo.ui.activities.TagsActivity"
+            android:name="com.bepis.apollox.ui.activities.TagsActivity"
             android:label="@string/title_activity_tags" >
         </activity>
     </application>
