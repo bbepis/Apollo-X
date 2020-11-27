@@ -30,6 +30,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.BaseColumns;
+import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AlbumColumns;
 import android.provider.MediaStore.Audio.ArtistColumns;
 import android.provider.MediaStore.Audio.AudioColumns;
@@ -252,13 +253,24 @@ public class SearchActivity extends Activity implements LoaderCallbacks<Cursor>,
      */
     @Override
     public Loader<Cursor> onCreateLoader(final int id, final Bundle args) {
-        final Uri uri = Uri.parse("content://media/external/audio/search/fancy/"
-                + Uri.encode(mFilterString));
+        final String modifiedQuery = "%" + mFilterString + "%";
+
         final String[] projection = new String[] {
-                BaseColumns._ID, MediaColumns.MIME_TYPE, ArtistColumns.ARTIST,
-                AlbumColumns.ALBUM, MediaColumns.TITLE, "data1", "data2"
+                BaseColumns._ID,
+                MediaColumns.MIME_TYPE,
+                ArtistColumns.ARTIST,
+                AlbumColumns.ALBUM,
+                MediaColumns.TITLE,
+                MediaStore.Audio.AudioColumns.ARTIST,
+                MediaStore.Audio.AudioColumns.ARTIST_ID
         };
-        return new CursorLoader(this, uri, projection, null, null, null);
+
+return new CursorLoader(this,
+        MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+        projection,
+        "ARTIST LIKE ? OR TITLE LIKE ? OR ALBUM LIKE ?",
+        new String[]{modifiedQuery, modifiedQuery, modifiedQuery},
+        null);
     }
 
     /**

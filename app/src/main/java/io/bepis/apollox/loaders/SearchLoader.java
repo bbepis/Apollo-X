@@ -18,6 +18,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.provider.MediaStore;
 import android.provider.MediaStore.Audio.AlbumColumns;
 import android.provider.MediaStore.Audio.ArtistColumns;
 import android.provider.MediaStore.MediaColumns;
@@ -118,13 +119,18 @@ public class SearchLoader extends WrappedAsyncTaskLoader<List<Song>> {
      * @return The {@link Cursor} used to perform the search.
      */
     public static final Cursor makeSearchCursor(final Context context, final String query) {
-        return context.getContentResolver().query(
-                Uri.parse("content://media/external/audio/search/fancy/" + Uri.encode(query)),
+        final String modifiedQuery = "%" + query + "%";
+
+        return context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
                 new String[] {
-                        BaseColumns._ID, MediaColumns.MIME_TYPE,
-                        ArtistColumns.ARTIST, AlbumColumns.ALBUM,
-                        MediaColumns.TITLE, "data1", "data2" //$NON-NLS-2$ 
-                }, null, null, null);
+                        BaseColumns._ID,
+                        MediaColumns.MIME_TYPE,
+                        ArtistColumns.ARTIST,
+                        AlbumColumns.ALBUM,
+                        MediaColumns.TITLE,
+                        MediaStore.Audio.AudioColumns.ARTIST,
+                        MediaStore.Audio.AudioColumns.ARTIST_ID
+                }, "ARTIST LIKE ? OR TITLE LIKE ? OR ALBUM LIKE ?", new String[]{modifiedQuery, modifiedQuery, modifiedQuery}, null);
     }
 
 }
