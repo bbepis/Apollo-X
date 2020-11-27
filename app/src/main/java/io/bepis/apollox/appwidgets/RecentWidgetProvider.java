@@ -50,9 +50,9 @@ public class RecentWidgetProvider extends AppWidgetBase {
 
     public static final String CMDAPPWIDGETUPDATE = "app_widget_recents_update";
 
-    public static final String CLICK_ACTION = "com.andrew.apollo.recents.appwidget.action.CLICK";
+    public static final String CLICK_ACTION = "io.bepis.apollox.recents.appwidget.action.CLICK";
 
-    public static final String REFRESH_ACTION = "com.andrew.apollo.recents.appwidget.action.REFRESH";
+    public static final String REFRESH_ACTION = "io.bepis.apollox.recents.appwidget.action.REFRESH";
 
     private static Handler sWorkerQueue;
 

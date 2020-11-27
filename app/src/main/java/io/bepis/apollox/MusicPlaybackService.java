@@ -82,7 +82,7 @@ public class MusicPlaybackService extends Service {
     /**
      * Indicates that the music has paused or resumed
      */
-    public static final String PLAYSTATE_CHANGED = "com.andrew.apollo.playstatechanged";
+    public static final String PLAYSTATE_CHANGED = "io.bepis.apollox.playstatechanged";
 
     /**
      * Indicates that music playback position within
@@ -93,75 +93,75 @@ public class MusicPlaybackService extends Service {
     /**
      * Indicates the meta data has changed in some way, like a track change
      */
-    public static final String META_CHANGED = "com.andrew.apollo.metachanged";
+    public static final String META_CHANGED = "io.bepis.apollox.metachanged";
 
     /**
      * Indicates the queue has been updated
      */
-    public static final String QUEUE_CHANGED = "com.andrew.apollo.queuechanged";
+    public static final String QUEUE_CHANGED = "io.bepis.apollox.queuechanged";
 
     /**
-     * Indicates the repeat mode chaned
+     * Indicates the repeat mode changed
      */
-    public static final String REPEATMODE_CHANGED = "com.andrew.apollo.repeatmodechanged";
+    public static final String REPEATMODE_CHANGED = "io.bepis.apollox.repeatmodechanged";
 
     /**
      * Indicates the shuffle mode changed
      */
-    public static final String SHUFFLEMODE_CHANGED = "com.andrew.apollo.shufflemodechanged";
+    public static final String SHUFFLEMODE_CHANGED = "io.bepis.apollox.shufflemodechanged";
 
     /**
      * For backwards compatibility reasons, also provide sticky
      * broadcasts under the music package
      */
-    public static final String APOLLO_PACKAGE_NAME = "com.andrew.apollo";
+    public static final String APOLLO_PACKAGE_NAME = "io.bepis.apollox";
     public static final String MUSIC_PACKAGE_NAME = "com.android.music";
 
     /**
-     * Called to indicate a general service commmand. Used in
+     * Called to indicate a general service command. Used in
      * {@link MediaButtonIntentReceiver}
      */
-    public static final String SERVICECMD = "com.andrew.apollo.musicservicecommand";
+    public static final String SERVICECMD = "io.bepis.apollox.musicservicecommand";
 
     /**
      * Called to go toggle between pausing and playing the music
      */
-    public static final String TOGGLEPAUSE_ACTION = "com.andrew.apollo.togglepause";
+    public static final String TOGGLEPAUSE_ACTION = "io.bepis.apollox.togglepause";
 
     /**
      * Called to go to pause the playback
      */
-    public static final String PAUSE_ACTION = "com.andrew.apollo.pause";
+    public static final String PAUSE_ACTION = "io.bepis.apollox.pause";
 
     /**
      * Called to go to stop the playback
      */
-    public static final String STOP_ACTION = "com.andrew.apollo.stop";
+    public static final String STOP_ACTION = "io.bepis.apollox.stop";
 
     /**
      * Called to go to the previous track
      */
-    public static final String PREVIOUS_ACTION = "com.andrew.apollo.previous";
+    public static final String PREVIOUS_ACTION = "io.bepis.apollox.previous";
 
     /**
      * Called to go to the next track
      */
-    public static final String NEXT_ACTION = "com.andrew.apollo.next";
+    public static final String NEXT_ACTION = "io.bepis.apollox.next";
 
     /**
      * Called to change the repeat mode
      */
-    public static final String REPEAT_ACTION = "com.andrew.apollo.repeat";
+    public static final String REPEAT_ACTION = "io.bepis.apollox.repeat";
 
     /**
      * Called to change the shuffle mode
      */
-    public static final String SHUFFLE_ACTION = "com.andrew.apollo.shuffle";
+    public static final String SHUFFLE_ACTION = "io.bepis.apollox.shuffle";
 
     /**
      * Called to update the service about the foreground state of Apollo's activities
      */
-    public static final String FOREGROUND_STATE_CHANGED = "com.andrew.apollo.fgstatechanged";
+    public static final String FOREGROUND_STATE_CHANGED = "io.bepis.apollox.fgstatechanged";
 
     public static final String NOW_IN_FOREGROUND = "nowinforeground";
     
@@ -171,17 +171,17 @@ public class MusicPlaybackService extends Service {
      * Used to easily notify a list that it should refresh. i.e. A playlist
      * changes
      */
-    public static final String REFRESH = "com.andrew.apollo.refresh";
+    public static final String REFRESH = "io.bepis.apollox.refresh";
 
     /**
      * Used by the alarm intent to shutdown the service after being idle
      */
-    private static final String SHUTDOWN = "com.andrew.apollo.shutdown";
+    private static final String SHUTDOWN = "io.bepis.apollox.shutdown";
 
     /**
      * Called to update the remote control client
      */
-    public static final String UPDATE_LOCKSCREEN = "com.andrew.apollo.updatelockscreen";
+    public static final String UPDATE_LOCKSCREEN = "io.bepis.apollox.updatelockscreen";
 
     public static final String CMDNAME = "command";
 

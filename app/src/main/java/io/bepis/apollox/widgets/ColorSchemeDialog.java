@@ -66,7 +66,7 @@ public class ColorSchemeDialog extends AlertDialog implements
 
     /*
      * (non-Javadoc)
-     * @see com.andrew.apollo.widgets.ColorPickerView.OnColorChangedListener#
+     * @see io.bepis.apollox.widgets.ColorPickerView.OnColorChangedListener#
      * onColorChanged(int)
      */
     @Override

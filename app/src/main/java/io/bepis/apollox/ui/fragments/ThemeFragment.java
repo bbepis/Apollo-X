@@ -110,7 +110,7 @@ public class ThemeFragment extends Fragment implements OnItemClickListener {
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        final Intent apolloThemeIntent = new Intent("com.andrew.apollo.THEMES");
+        final Intent apolloThemeIntent = new Intent("io.bepis.apollox.THEMES");
         apolloThemeIntent.addCategory("android.intent.category.DEFAULT");
 
         mPackageManager = getActivity().getPackageManager();

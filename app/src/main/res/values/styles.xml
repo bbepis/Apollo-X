@@ -17,11 +17,18 @@
 
     <!-- Main Holo -->
     <style name="Apollo.Theme.Dark" parent="@android:style/Theme.Holo">
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="DisablePreview" parent="@android:style/Theme.Holo">
+        <item name="android:windowDisablePreview">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
     <!-- Main Holo light -->
     <style name="Apollo.Theme.Light" parent="@android:style/Theme.Holo.Light">
+        <item name="android:windowDisablePreview">true</item>
         <item name="android:windowContentOverlay">@null</item>
     </style>
 

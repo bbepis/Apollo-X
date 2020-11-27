@@ -62,7 +62,7 @@ public class ThemeUtils {
     /**
      * Default package name.
      */
-    public static final String APOLLO_PACKAGE = "com.andrew.apollo";
+    public static final String APOLLO_PACKAGE = "io.bepis.apollox";
 
     /**
      * Current theme package name.
