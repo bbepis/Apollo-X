@@ -58,9 +58,9 @@
         android:allowTaskReparenting="true"
         android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
+        android:label="Apollo X"
         android:largeHeap="true"
-        android:taskAffinity="com.andrew.apollo.task" >
+        android:taskAffinity="io.bepis.apollox.task" >
 
         <!-- Searchable -->
         <meta-data
@@ -69,7 +69,8 @@
         <!-- Main activity -->
         <activity
             android:name="io.bepis.apollox.ui.activities.HomeActivity"
-            android:windowSoftInputMode="adjustPan" >
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/DisablePreview" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.MUSIC_PLAYER" />
@@ -82,9 +83,7 @@
         <!-- Now playing -->
         <activity
             android:name="io.bepis.apollox.ui.activities.AudioPlayerActivity"
-            android:clearTaskOnLaunch="true"
             android:exported="true"
-            android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -128,7 +127,7 @@
                 <data android:mimeType="vnd.android.cursor.dir/playlist" />
             </intent-filter>
             <intent-filter>
-                <action android:name="com.andrew.apollo.AUDIO_PLAYER" />
+                <action android:name="io.bepis.apollox.AUDIO_PLAYER" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
