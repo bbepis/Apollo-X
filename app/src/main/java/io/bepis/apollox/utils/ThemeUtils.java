@@ -230,27 +230,31 @@ public class ThemeUtils {
     public void setMenuItemColor(final MenuItem menuItem, final String resourceColorName,
             final String resourceDrawableName) {
 
-        final Drawable maskDrawable = getDrawable(resourceDrawableName);
-        if (!(maskDrawable instanceof BitmapDrawable)) {
-            return;
-        }
+        return;
 
-        final Bitmap maskBitmap = ((BitmapDrawable)maskDrawable).getBitmap();
-        final int width = maskBitmap.getWidth();
-        final int height = maskBitmap.getHeight();
+        // This code causes the icons to not be centered for some reason
 
-        final Bitmap outBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(outBitmap);
-        canvas.drawBitmap(maskBitmap, 0, 0, null);
-
-        final Paint maskedPaint = new Paint();
-        maskedPaint.setColor(getColor(resourceColorName));
-        maskedPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP));
-
-        canvas.drawRect(0, 0, width, height, maskedPaint);
-
-        final BitmapDrawable outDrawable = new BitmapDrawable(mResources, outBitmap);
-        menuItem.setIcon(outDrawable);
+//        final Drawable maskDrawable = getDrawable(resourceDrawableName);
+//        if (!(maskDrawable instanceof BitmapDrawable)) {
+//            return;
+//        }
+//
+//        final Bitmap maskBitmap = ((BitmapDrawable)maskDrawable).getBitmap();
+//        final int width = maskBitmap.getWidth();
+//        final int height = maskBitmap.getHeight();
+//
+//        final Bitmap outBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+//        final Canvas canvas = new Canvas(outBitmap);
+//        canvas.drawBitmap(maskBitmap, 0, 0, null);
+//
+//        final Paint maskedPaint = new Paint();
+//        maskedPaint.setColor(getColor(resourceColorName));
+//        maskedPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP));
+//
+//        canvas.drawRect(0, 0, width, height, maskedPaint);
+//
+//        final BitmapDrawable outDrawable = new BitmapDrawable(mResources, outBitmap);
+//        menuItem.setIcon(outDrawable);
     }
 
     /**
