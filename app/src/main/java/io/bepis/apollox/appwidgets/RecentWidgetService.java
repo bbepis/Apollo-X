@@ -146,7 +146,7 @@ public class RecentWidgetService extends RemoteViewsService {
                 mViews.setImageViewBitmap(R.id.app_widget_recents_base_image, bitmap);
             } else {
                 mViews.setImageViewResource(R.id.app_widget_recents_base_image,
-                        R.drawable.default_artwork);
+                        R.drawable.ic_default_artwork);
             }
 
             // Open the profile of the touched album

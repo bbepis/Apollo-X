@@ -23,6 +23,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
 import android.widget.ImageView;
 
 import io.bepis.apollox.R;
@@ -45,7 +46,7 @@ public abstract class ImageWorker {
     /**
      * Default artwork
      */
-    private final BitmapDrawable mDefaultArtwork;
+    private final Drawable mDefaultArtwork;
 
     /**
      * The resources to use
@@ -87,11 +88,16 @@ public abstract class ImageWorker {
         mResources = mContext.getResources();
         // Create the default artwork
         final ThemeUtils theme = new ThemeUtils(context);
-        mDefault = ((BitmapDrawable) theme.getDrawable("default_artwork")).getBitmap();
-        mDefaultArtwork = new BitmapDrawable(mResources, mDefault);
+
+
+        //mDefault = ((BitmapDrawable) theme.getDrawable("default_artwork")).getBitmap();
+        mDefault = ApolloUtils.getBitmapFromVectorDrawable(context, R.drawable.ic_default_artwork);
+        //mDefaultArtwork = new BitmapDrawable(mResources, mDefault);
         // No filter and no dither makes things much quicker
-        mDefaultArtwork.setFilterBitmap(false);
-        mDefaultArtwork.setDither(false);
+        //mDefaultArtwork.setFilterBitmap(false);
+        //mDefaultArtwork.setDither(false);
+        mDefaultArtwork = ContextCompat.getDrawable(context, R.drawable.ic_default_artwork);
+
         // Create the transparent layer for the transition drawable
         mCurrentDrawable = new ColorDrawable(mResources.getColor(R.color.transparent));
         // A transparent image (layer 0) and the new result (layer 1)

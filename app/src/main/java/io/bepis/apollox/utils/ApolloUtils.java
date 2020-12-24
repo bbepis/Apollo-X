@@ -21,13 +21,17 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -295,6 +299,21 @@ public final class ApolloUtils {
         return imageFetcher;
     }
 
+    public static Bitmap getBitmapFromVectorDrawable(Context context, int drawableId) {
+        Drawable drawable = ContextCompat.getDrawable(context, drawableId);
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            drawable = (DrawableCompat.wrap(drawable)).mutate();
+        }
+
+        Bitmap bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(),
+                drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+
+        return bitmap;
+    }
+
     /**
      * Used to create shortcuts for an artist, album, or playlist that is then
      * placed on the default launcher homescreen
@@ -316,8 +335,7 @@ public final class ApolloUtils {
                 bitmap = fetcher.getCachedBitmap(displayName);
             }
             if (bitmap == null) {
-                bitmap = BitmapFactory.decodeResource(context.getResources(),
-                        R.drawable.default_artwork);
+                bitmap = getBitmapFromVectorDrawable(context, R.drawable.ic_default_artwork);
             }
 
             // Intent used when the icon is touched
