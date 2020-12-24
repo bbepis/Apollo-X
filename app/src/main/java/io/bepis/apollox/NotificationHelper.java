@@ -13,12 +13,14 @@ package io.bepis.apollox;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 
@@ -37,6 +39,8 @@ public class NotificationHelper {
      * Notification ID
      */
     private static final int APOLLO_MUSIC_SERVICE = 1;
+
+    public static final String NOTIFICATION_CHANNEL_ID = "io.bepis.apollox.channel";
 
     /**
      * NotificationManager
@@ -70,16 +74,23 @@ public class NotificationHelper {
      */
     public NotificationHelper(final MusicPlaybackService service) {
         mService = service;
-        mNotificationManager = (NotificationManager)service
+        mNotificationManager = (NotificationManager) service
                 .getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+        String channelName = "Apollo X Background Service";
+        NotificationChannel chan = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, NotificationManager.IMPORTANCE_NONE);
+        chan.setLightColor(Color.BLUE);
+        chan.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
+        mNotificationManager.createNotificationChannel(chan);
     }
 
     /**
      * Call this to build the {@link Notification}.
      */
     public void buildNotification(final String albumName, final String artistName,
-            final String trackName, final Long albumId, final Bitmap albumArt,
-            final boolean isPlaying) {
+                                  final String trackName, final Long albumId, final Bitmap albumArt,
+                                  final boolean isPlaying) {
 
         // Default notfication layout
         mNotificationTemplate = new RemoteViews(mService.getPackageName(),
@@ -89,7 +100,7 @@ public class NotificationHelper {
         initCollapsedLayout(trackName, artistName, albumArt);
 
         // Notification Builder
-        mNotification = new NotificationCompat.Builder(mService)
+        mNotification = new NotificationCompat.Builder(mService, NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.stat_notify_music)
                 .setContentIntent(getPendingIntent())
                 .setPriority(Notification.PRIORITY_DEFAULT)
@@ -241,7 +252,7 @@ public class NotificationHelper {
      * Sets the track name, artist name, and album art in the normal layout
      */
     private void initCollapsedLayout(final String trackName, final String artistName,
-            final Bitmap albumArt) {
+                                     final Bitmap albumArt) {
         // Track name (line one)
         mNotificationTemplate.setTextViewText(R.id.notification_base_line_one, trackName);
         // Artist name (line two)
@@ -255,7 +266,7 @@ public class NotificationHelper {
      * expanded layout
      */
     private void initExpandedLayout(final String trackName, final String artistName,
-            final String albumName, final Bitmap albumArt) {
+                                    final String albumName, final Bitmap albumArt) {
         // Track name (line one)
         mExpandedView.setTextViewText(R.id.notification_expanded_base_line_one, trackName);
         // Album name (line two)

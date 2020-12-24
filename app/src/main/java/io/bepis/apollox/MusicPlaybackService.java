@@ -817,12 +817,13 @@ public class MusicPlaybackService extends Service {
      * Updates the notification, considering the current play and activity state
      */
     private void updateNotification() {
-        if (!mAnyActivityInForeground && isPlaying()) {
+        if (isPlaying()) {
             mNotificationHelper.buildNotification(getAlbumName(), getArtistName(),
                     getTrackName(), getAlbumId(), getAlbumArt(), isPlaying());
-        } else if (mAnyActivityInForeground) {
-            mNotificationHelper.killNotification();
         }
+//        else if (mAnyActivityInForeground) {
+//            mNotificationHelper.killNotification();
+//        }
     }
 
     /**

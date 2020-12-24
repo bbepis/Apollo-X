@@ -31,6 +31,7 @@
         android:targetSdkVersion="29" />
 
     <!-- Used for caching and creating new playlists -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- Used to check for a network connection -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
